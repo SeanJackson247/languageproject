@@ -181,7 +181,20 @@ void Line::pullDownArguments(){
 bool Line::isExpression(){
        return this->_isExpression;
     }
+TokenList* Line::insertDUDRightHands(TokenList* tokenList){
+    TokenList* tl = new TokenList();
+    int i=0;
+    while(i<tokenList->size()){
+        tl->add(tokenList->get(i));
+        if(tl->last()->isUnaryOperator()==true){
+            tl->add(new Token(Token::DudRightHand));
+        }
+        i++;
+    }
+    return tl;
+}
 TokenList* Line::convert2RPN(TokenList* data){
+    data = Line::insertDUDRightHands(data);
     data = Line::insertFunctionMarkers(data);
     data = Line::insertNOARGS(data);
     TokenList* operatorStack = new TokenList();
@@ -301,7 +314,8 @@ void Line::adjustToRPN(){
             }
             else if(this->isConditionalStatement()==true || this->isReturnStatement()==true){
                 Token* terminator = this->data->last();
-                Token* conditional = this->data->first();
+                Token* conditional = this->data->get(0);
+                qDebug()<<conditional->toString(0);
                 this->data->shrink(1);
                 TokenList* temp = new TokenList();
                 int i=1;
@@ -622,6 +636,8 @@ QString Line::toString(int indent){
         res+=QString::number(this->isVarDec());
         res+=", isExpression:=";
         res+=QString::number(this->isExpression());
+        res+=", isConditionalStatement:=";
+        res+=QString::number(this->isConditionalStatement());
         res+=", rpnbuff:1:=";
         res+=QString::number(this->_toRPNBuffer1);
         res+=",2:=";
@@ -741,6 +757,19 @@ Line::Line(int lineNumber, int indent, QString line){
     this->registerLine(this);
         this->_isFunctionHeader=false;
         this->_isExpression=false;
+    this->_isReturnStatement;
+    this->_isConditionalStatement;
+    this->_lexicalID;
+    this->_toRPNBuffer1=false;
+    this->_toRPNBuffer2=false;
+    this->_isLexicalPassMarker=false;
+    this->_isLexicalMarker=false;
+
+
+
+
+
+
         this->lineNumber = lineNumber;
         this->indent = indent;
         this->childs = new LineList();
@@ -952,6 +981,7 @@ int Line::getFirstRPNMarkerID(){
 LineList* Line::spaceOutRPNS(){
         LineList* result = new LineList();
         TokenList* container = new TokenList();
+        qDebug()<<"Spacing out RPNs...";
         int i=0;
         if(this->isExpression()==true){
             if(this->isConditionalStatement()==false && this->isReturnStatement()==false){
@@ -961,12 +991,11 @@ LineList* Line::spaceOutRPNS(){
                 i=1;
             }
             while(i<this->data->size()-1){
-                container->add(this->get(i));
+                qDebug()<<"Here is the error..."<<i;
+                container->add(this->data->get(i));
                 i++;
             }
         }
-     //   container = insertFunctionMarkers(container);
-     //   container = insertNOARGS(container);
         bool finished=false;
         int done=0;
         int marker=1;
@@ -1093,7 +1122,9 @@ LineList* Line::spaceOutRPNS(){
                 finished=true;
             }
         }
-        result->last()->childs = this->childs;
+        if(result->size()>0){
+            result->last()->childs = this->childs;
+        }
         return result;
     }
 

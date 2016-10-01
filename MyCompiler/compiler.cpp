@@ -258,7 +258,7 @@ void Compiler::doWork(QString fileName,QVector<QString> data){
         finalString+=lines->get(i)->toString(0);
         i++;
     }
-
+/*
     finalString+="\n\nAfter setting lexical scope markers...\n\n";
     lines = LineList::SetLexicalMarkers(lines);
 
@@ -285,7 +285,7 @@ void Compiler::doWork(QString fileName,QVector<QString> data){
         finalString+=QString::number(lexicalParents[i])+"\n";
         i++;
     }
-*/
+*//*
     finalString+="\n\nAfter flattening lexical scopes...\n\n";
 
     lines = LineList::FlattenLexicalScopes(lines);
@@ -294,7 +294,7 @@ void Compiler::doWork(QString fileName,QVector<QString> data){
     while(i<lines->size()){
         finalString+=lines->get(i)->toString(0);
         i++;
-    }
+    }*/
 
     //clean up
     Token::clearTokensRegister();

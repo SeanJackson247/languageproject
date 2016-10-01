@@ -9,6 +9,7 @@ private:static QVector<Token*> TokensRegister;
 //public static variables...
 public:static constexpr int RPNBuffer1=0;
 public:static constexpr int RPNBuffer2=1;
+public:static constexpr int DudRightHand=2;
 //public static methods...
 public:static void registerToken(Token* token);
 public:static void clearTokensRegister();
@@ -35,6 +36,8 @@ private:bool _isReturnStatement;
 private:bool _isRPNBufferToken;
 private:bool _isRPNBuffer1;
 private:bool _isRPNBuffer2;
+private:bool _isUnaryOperator;
+private:bool _isDudRightHand;
 //private instance methods...
 private:void eval();
 //public constructors...
@@ -69,6 +72,7 @@ public:bool isReturnStatement();
 public:bool isLeadingOperator();
 public:bool isSecondaryOperator();
 public:bool isDotOperator();
+public:bool isUnaryOperator();
 public:bool isHigherPrecedenceThan(Token* other);
 public:QString getString();
 public:QString toString(int indent);

@@ -24,6 +24,7 @@ class Line{
     public:static TokenList* insertFunctionMarkers(TokenList* data);
     public:static void registerLine(Line* line);
     public:static void clearLinesRegister();
+    public:static TokenList* insertDUDRightHands(TokenList* tokenList);
     //constructors...
     public:Line(int lineNumber,int indent,TokenList* data);
     public:Line(int lineNumber,int indent,TokenList* data,int TYPE_ID);

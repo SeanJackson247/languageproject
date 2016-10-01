@@ -41,7 +41,13 @@ void LineList::addFromList(LineList* l){
     }
 }
 Line* LineList::first(){
-    this->_data[0];
+    if(this->_data.size()>0){
+        return this->_data[0];
+    }
+    else{
+        qDebug()<<"ERROR!! - attempted access of first member of empty array.";
+        return NULL;
+    }
 }
 void LineList::clearChilds(int currentIndex){
     this->_data[currentIndex]->childs = new LineList();
@@ -227,7 +233,6 @@ LineList* LineList::SetLexicalMarkers(LineList* lines){
 }
 
 LineList* LineList::RPNPadding(LineList *lines){
-
     int i=0;
 
     LineList* temp = new LineList();

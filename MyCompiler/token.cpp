@@ -79,7 +79,9 @@ bool Token::isComma(){
 bool Token::isUnderScore(){
     return this->_isUnderScore;
 }
-
+bool Token::isUnaryOperator(){
+    return this->_isUnaryOperator;
+}
 bool Token::isArgumentMarker(){
     if(QString::compare(this->_data,"earg")==0){
         return true;
@@ -197,6 +199,12 @@ QVector<QString> OPERATORS={
     "."
 };
 
+QVector<QString> UNARY_OPERATORS={
+    "!",
+    "++",
+    "--"
+};
+
 bool Token::isRPNBufferToken(){
     return this->_isRPNBufferToken;
 }
@@ -259,6 +267,12 @@ void Token::eval(){
     }
     else{
         this->_isUnderScore=false;
+    }
+    if(QString::compare(this->_data,":")==0){
+        this->_isSemiColon=true;
+    }
+    else{
+        this->_isSemiColon=false;
     }
     if(__isSecondaryOperator(this->_data)==true){
         this->_isSecondaryOperator=true;
@@ -370,6 +384,17 @@ void Token::eval(){
     }
     this->_isOperator=found;
 
+    i=0;
+    found=false;
+    while(i<UNARY_OPERATORS.size() && found==false){
+        if(QString::compare(this->_data,UNARY_OPERATORS[i])==0){
+           found=true;
+        }
+        i++;
+    }
+    this->_isUnaryOperator=found;
+
+
 }
 
 bool Token::isLeadingOperator(){
@@ -382,13 +407,35 @@ bool Token::isSecondaryOperator(){
 Token::Token(QString data){
     Token::registerToken(this);
     this->_data = data;
+    this->_isAlphaNumeric=false;
+    this->_isUnderScore=false;
+    this->_isSecondaryOperator=false;
+    this->_isLeadingOperator=false;
+    this->_isConditionalElse=false;
+    this->_isConditionalIf=false;
+    this->_isConditionalStatement=false;
+    this->_isDotOperator=false;
+    this->_isOperator=false;
+    this->_isColon=false;
+    this->_isSemiColon=false;
+    this->_isVarDec=false;
+    this->_isLeftBracket=false;
+    this->_isRightBracket=false;
+    this->_isComma=false;
+    this->_isLambda=false;
+    this->_isReturnStatement=false;
     this->_isRPNBufferToken=false;
     this->_isRPNBuffer1=false;
     this->_isRPNBuffer2=false;
+    this->_isUnaryOperator=false;
+    this->_isDudRightHand=false;
+
+
     this->eval();
 }
 Token::Token(int id){
     Token::registerToken(this);
+    this->eval();
     if(id==Token::RPNBuffer1){
         this->_isRPNBufferToken=true;
         this->_isRPNBuffer1=true;
@@ -400,6 +447,13 @@ Token::Token(int id){
         this->_isRPNBuffer1=false;
         this->_isRPNBuffer2=true;
         this->_isOperator=false;
+    }
+    else if(id==Token::DudRightHand){
+        this->_isRPNBufferToken=false;
+        this->_isRPNBuffer1=false;
+        this->_isRPNBuffer2=false;
+        this->_isOperator=false;
+        this->_isDudRightHand=true;
     }
     else{
         this->_isRPNBufferToken=false;
